@@ -21,6 +21,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && install-php-extensions bcmath gd intl zip pdo_mysql exif opcache \
     && a2enmod rewrite \
+    && sed -i 's/<VirtualHost \*:80>/<VirtualHost *:*>/' /etc/apache2/sites-available/000-default.conf \
     && printf '<Directory /var/www/html>\n    AllowOverride All\n</Directory>\n' > /etc/apache2/conf-available/akaunting.conf \
     && a2enconf akaunting \
     && printf 'memory_limit=512M\nupload_max_filesize=32M\npost_max_size=32M\n' > /usr/local/etc/php/conf.d/akaunting.ini

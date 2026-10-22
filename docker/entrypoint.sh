@@ -48,4 +48,10 @@ fi
 
 chown -R www-data:www-data storage bootstrap/cache "$STATE_DIR"
 
+# PDF rendering (dompdf) loads print.css from APP_URL, so its port must also answer inside the container.
+APP_PORT=$(php -r '$u = parse_url((string) getenv("APP_URL")); echo $u["port"] ?? "";')
+if [ -n "$APP_PORT" ] && [ "$APP_PORT" != "80" ] && ! grep -q "^Listen ${APP_PORT}$" /etc/apache2/ports.conf; then
+    echo "Listen ${APP_PORT}" >> /etc/apache2/ports.conf
+fi
+
 exec docker-php-entrypoint "$@"
