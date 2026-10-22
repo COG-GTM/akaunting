@@ -2,9 +2,11 @@
 
 namespace Tests\Unit\Utilities;
 
+use App\Models\Common\Media;
 use App\Utilities\Image;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
+use Plank\Mediable\Facades\MediaUploader;
 use Tests\TestCase;
 
 class ImageTest extends TestCase
@@ -19,11 +21,17 @@ class ImageTest extends TestCase
         $this->assertSame(64, $image->height());
     }
 
-    public function testItResizesAnImageFromBinaryContents()
+    public function testItResizesAStoredMediaFile()
     {
-        $contents = file_get_contents(base_path('public/img/company.png'));
+        $media = MediaUploader::beforeSave(fn ($media) => $media->company_id = company_id())
+            ->fromSource(base_path('public/img/company.png'))
+            ->toDirectory('tests/image-resize')
+            ->onDuplicateReplace()
+            ->upload();
 
-        $resized = Image::resize($contents, '40', '20');
+        $resized = Image::resize(Media::findOrFail($media->id), '40', '20');
+
+        $media->delete();
 
         $image = (new ImageManager(new Driver()))->read($resized);
 

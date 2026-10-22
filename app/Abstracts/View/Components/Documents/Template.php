@@ -257,7 +257,7 @@ abstract class Template extends Component
         }
 
         try {
-            $image = Image::resize($media ? $media->contents() : $path, setting('invoice.logo_size_width'), setting('invoice.logo_size_height'));
+            $image = Image::resize($media ?: $path, setting('invoice.logo_size_width'), setting('invoice.logo_size_height'));
         } catch (\Exception $e) {
             Log::info('Company ID: ' . company_id() . ' components/documentshow.php exception.');
             Log::info($e->getMessage());
