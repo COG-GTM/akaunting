@@ -11,7 +11,7 @@ services:
     ports:
       - "127.0.0.1:${AKAUNTING_PORT:-8080}:80"
     environment:
-      APP_URL: ${APP_URL:-http://localhost:8080}
+      APP_URL: ${APP_URL:-http://localhost:${AKAUNTING_PORT:-8080}}
       DB_HOST: db
       DB_PORT: 3306
       DB_DATABASE: akaunting
@@ -35,8 +35,8 @@ services:
         until grep -qs '^APP_INSTALLED=true' /var/lib/akaunting/.env; do sleep 5; done
         ln -sfn /var/lib/akaunting/.env /var/www/html/.env
         while true; do
+          sleep $$((60 - $$(date +%s) % 60))
           runuser -u www-data -- php artisan schedule:run --no-interaction
-          sleep 60
         done
 
   db:

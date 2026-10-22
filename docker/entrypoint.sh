@@ -13,7 +13,8 @@ if [ -f "$STATE_DIR/.env" ]; then
 fi
 
 if ! grep -q '^APP_INSTALLED=true' .env 2>/dev/null; then
-    rm -f .env
+    # Copy rather than let the installer move .env.example, so a failed install can be retried.
+    cp .env.example .env
 
     echo "Waiting for database ${DB_HOST}:${DB_PORT:-3306}..."
     until php -r 'try { new PDO("mysql:host=" . getenv("DB_HOST") . ";port=" . (getenv("DB_PORT") ?: 3306), getenv("DB_USERNAME"), getenv("DB_PASSWORD")); } catch (Exception $e) { exit(1); }'; do
