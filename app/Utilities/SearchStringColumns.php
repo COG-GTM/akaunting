@@ -4,6 +4,7 @@ namespace App\Utilities;
 
 use Lorisleiva\LaravelSearchString\AST\ListSymbol;
 use Lorisleiva\LaravelSearchString\AST\QuerySymbol;
+use Lorisleiva\LaravelSearchString\AST\SoloSymbol;
 use Lorisleiva\LaravelSearchString\Options\ColumnRule;
 use Lorisleiva\LaravelSearchString\Visitors\BuildColumnsVisitor;
 
@@ -49,5 +50,22 @@ class SearchStringColumns extends BuildColumnsVisitor
             null,
             $this->boolean,
         );
+    }
+
+    protected function buildSearch(SoloSymbol $solo)
+    {
+        $wheres = $this->manager->getSearchables()->map(fn ($column) => $this->buildSearchWhereClause($solo, $column));
+
+        if ($wheres->isEmpty()) {
+            return;
+        }
+
+        // Laravel 11+ passes "boolean" by name to array wheres, so the package's [column, operator, value, boolean]
+        // clauses are applied one by one inside a nested where instead
+        return $this->builder->where(function ($query) use ($wheres) {
+            foreach ($wheres as [$column, $operator, $value, $boolean]) {
+                $query->where($column, $operator, $value, $boolean);
+            }
+        }, null, null, $this->boolean);
     }
 }

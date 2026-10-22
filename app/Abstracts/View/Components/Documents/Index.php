@@ -265,7 +265,7 @@ abstract class Index extends Component
      * @return void
      */
     public function __construct(
-        string $type, string $contact_type = '', string $category_type = '', string $alias = '', $documents = [], int $totalDocuments = null, string $group = '', string $page = '', string $textTabDocument = '', string $textPage = '',
+        string $type, string $contact_type = '', string $category_type = '', string $alias = '', $documents = [], ?int $totalDocuments = null, string $group = '', string $page = '', string $textTabDocument = '', string $textPage = '',
         string $routeTabDocument = '', string $routeTabRecurring = '', string $routeParamsTabUnpaid = '', string $routeParamsTabDraft = '',
         string $permissionCreate = '', string $permissionUpdate = '', string $permissionDelete = '',
         bool $hideAcceptPayment = false, bool $checkPermissionCreate = true,

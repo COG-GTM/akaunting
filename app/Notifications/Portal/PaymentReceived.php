@@ -46,7 +46,7 @@ class PaymentReceived extends Notification
     /**
      * Create a notification instance.
      */
-    public function __construct(Document $invoice = null, Transaction $transaction = null, string $template_alias = null, bool $attach_pdf = false)
+    public function __construct(?Document $invoice = null, ?Transaction $transaction = null, ?string $template_alias = null, bool $attach_pdf = false)
     {
         parent::__construct();
 

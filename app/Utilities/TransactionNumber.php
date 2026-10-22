@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 
 class TransactionNumber implements TransactionNumberInterface
 {
-    public function getNextNumber($type, $suffix = '', ?Contact $contact): string
+    public function getNextNumber($type, $suffix = '', ?Contact $contact = null): string
     {
         $prefix = setting('transaction' . $suffix . '.number_prefix');
         $next   = (string) setting('transaction' . $suffix . '.number_next');
@@ -52,7 +52,7 @@ class TransactionNumber implements TransactionNumberInterface
         return $number_exists->exists();
     }
 
-    public function increaseNextNumber($type, $suffix = '', ?Contact $contact): void
+    public function increaseNextNumber($type, $suffix = '', ?Contact $contact = null): void
     {
         $next = setting('transaction' . $suffix . '.number_next', 1) + 1;
 
