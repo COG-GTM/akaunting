@@ -213,6 +213,9 @@ class InvoicesTest extends FeatureTestCase
 
         $this->assertStringStartsWith('%PDF-', $response->getContent());
         $this->assertStringContainsString('attachment;', $response->headers->get('content-disposition'));
+
+        // The company logo is embedded as a data: URI, which dompdf 3 only renders when data:// is allowed
+        $this->assertStringContainsString('/Subtype /Image', $response->getContent());
     }
 
     public function testItShouldSeeInvoiceCreatePage()
