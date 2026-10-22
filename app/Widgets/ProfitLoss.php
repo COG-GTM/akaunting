@@ -71,7 +71,7 @@ class ProfitLoss extends Widget
 
         $start_date = $this->start_date->copy();
 
-        $counter = $this->end_date->diffInMonths($this->start_date);
+        $counter = (int) $this->end_date->diffInMonths($this->start_date, true);
 
         for ($j = 0; $j <= $counter; $j++) {
             $labels[$j] = $start_date->format($this->getMonthlyDateFormat());

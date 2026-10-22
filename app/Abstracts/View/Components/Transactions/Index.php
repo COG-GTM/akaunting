@@ -169,7 +169,7 @@ abstract class Index extends Component
     public $textAmount;
 
     public function __construct(
-        string $type = '', string $alias = '', $transactions = [], int $totalTransactions = null,
+        string $type = '', string $alias = '', $transactions = [], ?int $totalTransactions = null,
         string $permissionCreate = '', string $permissionUpdate = '', string $permissionDelete = '',
         bool $checkPermissionCreate = true,
         bool $hideIncomeCreate = false,  $routeIncomeCreate = '', string $textIncomeCreate = '',

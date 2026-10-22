@@ -27,7 +27,7 @@ class Tips extends Component
      */
     public function __construct(
         string $position = 'relative',
-        string $path = null,
+        ?string $path = null,
         $tips = []
     ) {
         $this->position = $position;

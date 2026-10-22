@@ -22,7 +22,7 @@ class PaymentMethod extends Component
      * @return void
      */
     public function __construct(
-        $code = null, $method = null, string $payment_method = null, array $payment_methods = [], $type = null
+        $code = null, $method = null, ?string $payment_method = null, array $payment_methods = [], $type = null
     ) {
         $this->code = $code;
         $this->method = $method;

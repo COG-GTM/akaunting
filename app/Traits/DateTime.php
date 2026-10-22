@@ -218,7 +218,7 @@ trait DateTime
         $w = 52;
 
         if (request()->filled('start_date') && request()->filled('end_date')) {
-            $w = Date::parse($start->copy())->diffInWeeks(Date::parse(request('end_date'))) + 1;
+            $w = (int) Date::parse($start->copy())->diffInWeeks(Date::parse(request('end_date')), true) + 1;
         }
 
         for ($i = 0; $i < $w; $i++) {
@@ -237,7 +237,7 @@ trait DateTime
         $m = 12;
 
         if (request()->filled('start_date') && request()->filled('end_date')) {
-            $m = Date::parse($start->copy())->diffInMonths(Date::parse(request('end_date'))) + 1;
+            $m = (int) Date::parse($start->copy())->diffInMonths(Date::parse(request('end_date')), true) + 1;
         }
 
         for ($i = 0; $i < $m; $i++) {
@@ -261,7 +261,7 @@ trait DateTime
             Therefore, this change has been made. Ticket: #8106
          */
         if (request()->filled('start_date') && request()->filled('end_date')) {
-            $q = Date::parse($start->copy())->diffInQuarters(Date::parse(request('end_date'))) + 1;
+            $q = (int) Date::parse($start->copy())->diffInQuarters(Date::parse(request('end_date')), true) + 1;
         }
 
         for ($i = 0; $i < $q; $i++) {

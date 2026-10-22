@@ -45,7 +45,7 @@ class Transaction extends Notification
     /**
      * Create a notification instance.
      */
-    public function __construct(Model $transaction = null, string $template_alias = null, bool $attach_pdf = false, array $custom_mail = [], $attachments = [])
+    public function __construct(?Model $transaction = null, ?string $template_alias = null, bool $attach_pdf = false, array $custom_mail = [], $attachments = [])
     {
         parent::__construct();
 

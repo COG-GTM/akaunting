@@ -281,10 +281,7 @@ return new class extends Migration
             $table->unsignedInteger('created_by')->nullable()->after('enabled');
             $table->string('created_from', 100)->nullable()->after('enabled');
 
-            $connection = Schema::getConnection();
-            $d_table = $connection->getDoctrineSchemaManager()->listTableDetails($connection->getTablePrefix() . 'items');
-
-            if ($d_table->hasIndex('items_company_id_sku_deleted_at_unique')) {
+            if (Schema::hasIndex('items', 'items_company_id_sku_deleted_at_unique')) {
                 // 1.3 update
                 $table->dropUnique('items_company_id_sku_deleted_at_unique');
             } else {

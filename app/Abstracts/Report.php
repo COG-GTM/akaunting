@@ -139,7 +139,7 @@ abstract class Report
 
     public $row_tree_nodes = [];
 
-    public function __construct(Model $model = null, $load_data = true)
+    public function __construct(?Model $model = null, $load_data = true)
     {
         // Set first, so the GroupShowing listeners of setGroups() can tell which report row this is
         $this->model = $model;
@@ -468,10 +468,10 @@ abstract class Report
         [$start, $end] = $this->getStartAndEndDates($this->year);
 
         $counter = match ($period) {
-            'weekly'    => $end->diffInWeeks($start),
-            'quarterly' => $end->diffInQuarters($start),
-            'yearly'    => $end->diffInYears($start),
-            default     => $end->diffInMonths($start),
+            'weekly'    => (int) $end->diffInWeeks($start, true),
+            'quarterly' => (int) $end->diffInQuarters($start, true),
+            'yearly'    => (int) $end->diffInYears($start, true),
+            default     => (int) $end->diffInMonths($start, true),
         };
 
         for ($j = 0; $j <= $counter; $j++) {
