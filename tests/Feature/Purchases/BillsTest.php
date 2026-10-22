@@ -45,6 +45,18 @@ class BillsTest extends FeatureTestCase
             ->assertSee($bill->contact_email);
     }
 
+    public function testItShouldDownloadBillPdf()
+    {
+        $bill = $this->dispatch(new CreateDocument($this->getRequest()));
+
+        $response = $this->loginAs()
+            ->get(route('bills.pdf', $bill->id))
+            ->assertOk()
+            ->assertHeader('content-type', 'application/pdf');
+
+        $this->assertStringStartsWith('%PDF-', $response->getContent());
+    }
+
     public function testItShouldSeeBillCreatePage()
     {
         $this->loginAs()

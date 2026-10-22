@@ -27,7 +27,7 @@ class Bill extends Notification
     /**
      * Create a notification instance.
      */
-    public function __construct(Document $bill = null, string $template_alias = null)
+    public function __construct(?Document $bill = null, ?string $template_alias = null)
     {
         parent::__construct();
 

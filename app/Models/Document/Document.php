@@ -305,7 +305,7 @@ class Document extends Model
         $this->document_number = app(DocumentNumber::class)->getNextNumber($type, $src->contact);
     }
 
-    public function getSentAtAttribute(string $value = null)
+    public function getSentAtAttribute(?string $value = null)
     {
         if ($this->relationLoaded('histories')) {
             $sent = $this->histories->where('status', 'sent')->first();
@@ -316,7 +316,7 @@ class Document extends Model
         return $sent->created_at ?? null;
     }
 
-    public function getReceivedAtAttribute(string $value = null)
+    public function getReceivedAtAttribute(?string $value = null)
     {
         if ($this->relationLoaded('histories')) {
             $received = $this->histories->where('status', 'received')->first();

@@ -1,0 +1,55 @@
+# Local development / verification stack. Defaults are for localhost only:
+# override the passwords via environment (or a compose .env) before exposing it.
+x-app-volumes: &app-volumes
+  - app-state:/var/lib/akaunting
+  - app-storage:/var/www/html/storage
+
+services:
+  app:
+    build: .
+    image: akaunting:php8.4.27
+    ports:
+      - "127.0.0.1:${AKAUNTING_PORT:-8080}:80"
+    environment:
+      APP_URL: ${APP_URL:-http://localhost:${AKAUNTING_PORT:-8080}}
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: akaunting
+      DB_USERNAME: akaunting
+      DB_PASSWORD: ${DB_PASSWORD:-akaunting}
+      AKAUNTING_ADMIN_EMAIL: ${AKAUNTING_ADMIN_EMAIL:-admin@akaunting.test}
+      AKAUNTING_ADMIN_PASSWORD: ${AKAUNTING_ADMIN_PASSWORD:-password}
+    volumes: *app-volumes
+    depends_on:
+      - db
+
+  scheduler:
+    image: akaunting:php8.4.27
+    depends_on:
+      - app
+    volumes: *app-volumes
+    entrypoint:
+      - sh
+      - -c
+      - |
+        until grep -qs '^APP_INSTALLED=true' /var/lib/akaunting/.env; do sleep 5; done
+        ln -sfn /var/lib/akaunting/.env /var/www/html/.env
+        while true; do
+          sleep $$((60 - $$(date +%s) % 60))
+          runuser -u www-data -- php artisan schedule:run --no-interaction
+        done
+
+  db:
+    image: mariadb:11.4
+    environment:
+      MARIADB_DATABASE: akaunting
+      MARIADB_USER: akaunting
+      MARIADB_PASSWORD: ${DB_PASSWORD:-akaunting}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+    volumes:
+      - db-data:/var/lib/mysql
+
+volumes:
+  app-state:
+  app-storage:
+  db-data:

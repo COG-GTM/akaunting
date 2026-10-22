@@ -57,6 +57,18 @@ class TransactionsTest extends FeatureTestCase
             ->assertSee($transaction->contact->email);
     }
 
+    public function testItShouldDownloadTransactionPdf()
+    {
+        $transaction = $this->dispatch(new CreateTransaction($this->getRequest()));
+
+        $response = $this->loginAs()
+            ->get(route('transactions.pdf', $transaction->id))
+            ->assertOk()
+            ->assertHeader('content-type', 'application/pdf');
+
+        $this->assertStringStartsWith('%PDF-', $response->getContent());
+    }
+
     public function testItShouldSeeTransactionCreatePage()
     {
         $this->loginAs()

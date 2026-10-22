@@ -120,7 +120,7 @@ abstract class Form extends Component
      * @return void
      */
     public function __construct(
-        string $name = '', string $type = 'text', string $label = '', string $id = null, $value = '', $valueKey = null, string $placeholder = '', string $searchText = '',
+        string $name = '', string $type = 'text', string $label = '', ?string $id = null, $value = '', $valueKey = null, string $placeholder = '', string $searchText = '',
         $options = [], $option = [], string $optionKey = 'id', string $optionValue = 'name', $fullOptions = [], $checked = null, $checkedKey = null, $selected = null, $selectedKey = null, $rows = '3',
         $remote = false, $multiple = false, $addNew = false, $group = false,
         bool $searchable = false, bool $disabled = false, bool $readonly = false, bool $required = true, bool $notRequired = false,

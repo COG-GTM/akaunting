@@ -47,7 +47,7 @@
             (string) $payment_term = setting($type . '.payment_terms', 0);
 
             if (($document)) {
-                $payment_term = \Date::parse($document->due_at)->diffInDays(\Date::parse($document->issued_at));
+                $payment_term = (int) \Date::parse($document->due_at)->diffInDays(\Date::parse($document->issued_at), true);
 
                 if ($payment_term > 0) {
                     $payment_term++;

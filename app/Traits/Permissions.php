@@ -304,7 +304,7 @@ trait Permissions
             return;
         }
 
-        $role->attachPermission($permission);
+        $role->givePermission($permission);
     }
 
     public function detachPermission($role, $permission, $delete = true)
@@ -326,7 +326,7 @@ trait Permissions
         }
 
         if ($role->hasPermission($permission->name)) {
-            $role->detachPermission($permission);
+            $role->removePermission($permission);
         }
 
         if ($delete === false) {

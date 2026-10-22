@@ -26,7 +26,7 @@ class Resource extends HttpException
      *
      * @return void
      */
-    public function __construct($message = null, $errors = null, Exception $previous = null, $headers = [], $code = 0)
+    public function __construct($message = null, $errors = null, ?Exception $previous = null, $headers = [], $code = 0)
     {
         if (is_null($errors)) {
             $this->errors = new MessageBag;

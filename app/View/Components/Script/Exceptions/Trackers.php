@@ -27,7 +27,7 @@ class Trackers extends Component
      * @return void
      */
     public function __construct(
-        string $channel = null, string $action = null, string $ip = null, $tags = [], $params = []
+        ?string $channel = null, ?string $action = null, ?string $ip = null, $tags = [], $params = []
     ) {
         $this->channel = $this->getChannel($channel);
         $this->action = $this->getAction($action);

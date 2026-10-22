@@ -192,6 +192,32 @@ class InvoicesTest extends FeatureTestCase
             ->assertSee($invoice->contact_email);
     }
 
+    public function testItShouldPrintInvoice()
+    {
+        $invoice = $this->dispatch(new CreateDocument($this->getRequest()));
+
+        $this->loginAs()
+            ->get(route('invoices.print', $invoice->id))
+            ->assertOk()
+            ->assertSee($invoice->document_number);
+    }
+
+    public function testItShouldDownloadInvoicePdf()
+    {
+        $invoice = $this->dispatch(new CreateDocument($this->getRequest()));
+
+        $response = $this->loginAs()
+            ->get(route('invoices.pdf', $invoice->id))
+            ->assertOk()
+            ->assertHeader('content-type', 'application/pdf');
+
+        $this->assertStringStartsWith('%PDF-', $response->getContent());
+        $this->assertStringContainsString('attachment;', $response->headers->get('content-disposition'));
+
+        // The company logo is embedded as a data: URI, which dompdf 3 only renders when data:// is allowed
+        $this->assertStringContainsString('/Subtype /Image', $response->getContent());
+    }
+
     public function testItShouldSeeInvoiceCreatePage()
     {
         $this->loginAs()
@@ -213,6 +239,43 @@ class InvoicesTest extends FeatureTestCase
         $this->assertDatabaseHas('documents', [
             'document_number' => $request['document_number'],
         ]);
+    }
+
+    public function testItShouldCreateCustomerThenInvoiceAndDownloadItsPdf()
+    {
+        $customer_request = Contact::factory()->customer()->enabled()->raw();
+
+        $this->loginAs()
+            ->post(route('customers.store'), $customer_request)
+            ->assertStatus(200);
+
+        $customer = Contact::where('email', $customer_request['email'])->firstOrFail();
+
+        $request = $this->getRequest();
+        $request['contact_id'] = $customer->id;
+        $request['contact_name'] = $customer->name;
+        $request['contact_email'] = $customer->email;
+
+        $this->post(route('invoices.store'), $request)
+            ->assertStatus(200);
+
+        $this->assertFlashLevel('success');
+
+        $invoice = Document::invoice()->where('document_number', $request['document_number'])->firstOrFail();
+
+        $this->assertSame($customer->id, $invoice->contact_id);
+        $this->assertCount(count($request['items']), $invoice->items);
+
+        $this->get(route('invoices.show', $invoice->id))
+            ->assertOk()
+            ->assertSee($customer->name)
+            ->assertSee($invoice->items->first()->name);
+
+        $response = $this->get(route('invoices.pdf', $invoice->id))
+            ->assertOk()
+            ->assertHeader('content-type', 'application/pdf');
+
+        $this->assertStringStartsWith('%PDF-', $response->getContent());
     }
 
     public function testItShouldCreateInvoiceWithIsoDatesFromWebForm()
