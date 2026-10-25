@@ -16,7 +16,10 @@ jobs:
 
     strategy:
       matrix:
-        php: ['8.1', '8.2', '8.3']
+        # PHP 8.1 is EOL and has no release fixing PHP2Shell (CVE-2026-109618 / CVE-2026-109619).
+        # setup-php installs the newest patch of each minor (>= 8.2.35 / 8.3.36); the lane name
+        # and the "Verify patched PHP" step make the installed patch visible in the CI log.
+        php: ['8.2', '8.3']
 
     steps:
       - name: Checkout code
@@ -34,6 +37,17 @@ jobs:
           php-version: ${{ matrix.php }}
           extensions: bcmath, ctype, dom, fileinfo, intl, gd, json, mbstring, pdo, pdo_sqlite, openssl, sqlite, xml, zip
           coverage: none
+
+      - name: Verify patched PHP (PHP2Shell, CVE-2026-109618 / CVE-2026-109619)
+        run: |
+          php -v
+          php -r '$fixed = ["8.2" => "8.2.35", "8.3" => "8.3.36", "8.4" => "8.4.27", "8.5" => "8.5.12"];
+            $min = $fixed[PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION] ?? null;
+            if ($min === null || version_compare(PHP_VERSION, $min, "<")) {
+              fwrite(STDERR, "::error::PHP " . PHP_VERSION . " predates the PHP2Shell fix (" . ($min ?? "no fixed release for this branch") . ")\n");
+              exit(1);
+            }
+            echo "PHP " . PHP_VERSION . " >= $min (PHP2Shell fixed)\n";'
 
       - name: Copy .env
         run: cp .env.testing .env
