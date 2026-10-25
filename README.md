@@ -14,7 +14,7 @@ Online accounting software designed for small businesses and freelancers. Akaunt
 
 ## Requirements
 
-* PHP 8.1 or higher
+* PHP 8.1 or higher (see [SECURITY.md](SECURITY.md#php-runtime): run a build patched for PHP2Shell, i.e. PHP 8.2.35+, 8.3.36+, 8.4.27+ or 8.5.12+; PHP 8.1 is end-of-life and has no fixed release)
 * Node.js 18 or 20 (the asset pipeline does not build on Node 21+ yet)
 * Database (e.g.: MariaDB, MySQL, PostgreSQL, SQLite)
 * Web Server (eg: Apache, Nginx, IIS)
