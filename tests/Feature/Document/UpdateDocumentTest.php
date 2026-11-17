@@ -121,6 +121,50 @@ class UpdateDocumentTest extends FeatureTestCase
         $this->assertEquals(20.00, $invoice->paid);
     }
 
+    public function testItComparesTheTotalWithThePaymentsConvertedToTheEditedCurrency(): void
+    {
+        $invoice = $this->createPartlyPaidInvoice(1, 100, 50);
+
+        // 50 USD paid is 25 EUR at 0.5, so a 25 EUR total is settled, not below what was paid
+        $request = $this->getUpdateRequest($invoice, 1, 25);
+        $request['currency_code'] = 'EUR';
+        $request['currency_rate'] = 0.5;
+        $request['items'][0]['currency'] = 'EUR';
+
+        $this->dispatch(new UpdateDocument($invoice, $request));
+
+        $invoice = Document::find($invoice->id);
+
+        $this->assertSame('EUR', $invoice->currency_code);
+        $this->assertEquals(25, $invoice->amount);
+        $this->assertSame('paid', $invoice->status);
+    }
+
+    public function testItRejectsATotalBelowThePaymentsConvertedToTheEditedCurrency(): void
+    {
+        $invoice = $this->createPartlyPaidInvoice(1, 100, 50);
+
+        $request = $this->getUpdateRequest($invoice, 1, 20);
+        $request['currency_code'] = 'EUR';
+        $request['currency_rate'] = 0.5;
+        $request['items'][0]['currency'] = 'EUR';
+
+        try {
+            $this->dispatch(new UpdateDocument($invoice, $request));
+
+            $this->fail('An update below the converted paid amount must be rejected.');
+        } catch (\Exception $e) {
+            $this->assertStringContainsString('can not be less than the amount already paid', $e->getMessage());
+            $this->assertStringContainsString('25,00', $e->getMessage());
+        }
+
+        $invoice = Document::find($invoice->id);
+
+        $this->assertSame('USD', $invoice->currency_code);
+        $this->assertEquals(100, $invoice->amount);
+        $this->assertSame('partial', $invoice->status);
+    }
+
     public function testItRejectsABillTotalBelowWhatWasAlreadyPaid(): void
     {
         $request = Document::factory()->bill()->items()->raw(['status' => 'received']);

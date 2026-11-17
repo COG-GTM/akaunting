@@ -78,8 +78,17 @@ class UpdateDocument extends Job implements ShouldUpdate
                 $currency_code = $this->request['currency_code'] ?? $this->model->currency_code;
                 $precision = currency($currency_code)->getPrecision();
 
+                $currency_rate = $this->request['currency_rate'] ?? $this->model->currency_rate;
+
                 $amount = round((float) $this->request['amount'], $precision);
-                $paid = round((float) $this->model->paid_amount, $precision);
+                $paid = (float) $this->model->paid_amount;
+
+                // Paid is summed in the stored currency, the new total is in the edited one
+                if ($currency_code != $this->model->currency_code) {
+                    $paid = $this->model->convertBetween($paid, $this->model->currency_code, $this->model->currency_rate, $currency_code, $currency_rate);
+                }
+
+                $paid = round($paid, $precision);
 
                 // Payments can't exceed the total, so neither can an edit push the total below them
                 if ($amount < $paid) {
