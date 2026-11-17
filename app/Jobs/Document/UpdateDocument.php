@@ -13,6 +13,7 @@ use App\Traits\Relationships;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class UpdateDocument extends Job implements ShouldUpdate
 {
@@ -88,7 +89,7 @@ class UpdateDocument extends Job implements ShouldUpdate
                         'amount' => money($paid, $currency_code),
                     ]);
 
-                    throw new \Exception($message);
+                    throw ValidationException::withMessages(['amount' => $message]);
                 }
 
                 $this->request['status'] = ($amount > $paid) ? 'partial' : 'paid';

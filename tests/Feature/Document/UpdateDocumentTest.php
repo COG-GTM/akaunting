@@ -77,6 +77,25 @@ class UpdateDocumentTest extends FeatureTestCase
         ]);
     }
 
+    public function testItReturnsAValidationErrorWhenTheApiLowersTheTotalBelowWhatWasPaid(): void
+    {
+        $invoice = $this->createPartlyPaidInvoice(3, 19.69, 20.00);
+
+        $this->withExceptionHandling()
+            ->withHeaders([
+                'Authorization' => 'Basic ' . base64_encode('test@company.com:123456'),
+            ])
+            ->patchJson(route('api.documents.update', ['document' => $invoice->id, 'search' => 'type:invoice']), $this->getUpdateRequest($invoice, 1, 19.69))
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['amount']);
+
+        $this->assertDatabaseHas('documents', [
+            'id' => $invoice->id,
+            'status' => 'partial',
+            'amount' => 59.07,
+        ]);
+    }
+
     public function testItMarksTheDocumentPaidWhenTheTotalIsLoweredToWhatWasPaid(): void
     {
         $invoice = $this->createPartlyPaidInvoice(3, 19.69, 20.00);
