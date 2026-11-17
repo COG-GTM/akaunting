@@ -282,6 +282,7 @@ class BillsTest extends FeatureTestCase
         // Non-reconciled transaction — must follow the new contact
         $transaction = Transaction::factory()->expense()->create([
             'document_id' => $bill->id,
+            'amount'      => $bill->amount,
             'contact_id'  => $vendorA->id,
             'reconciled'  => 0,
         ]);
@@ -316,6 +317,7 @@ class BillsTest extends FeatureTestCase
         // Any reconciled transaction on the bill must block the contact change
         Transaction::factory()->expense()->create([
             'document_id' => $bill->id,
+            'amount'      => $bill->amount,
             'contact_id'  => $vendorA->id,
             'reconciled'  => 1,
         ]);
