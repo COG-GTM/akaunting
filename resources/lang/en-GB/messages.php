@@ -24,6 +24,7 @@ return [
 
     'error' => [
         'over_payment'      => 'Error: Payment not added! The amount you entered passes the total: :amount',
+        'amount_below_paid' => 'Error: :type not updated! The total can not be less than the amount already paid: :amount',
         'not_user_company'  => 'Error: You are not allowed to manage this company!',
         'customer'          => 'Error: User not created! :name already uses this email address.',
         'no_file'           => 'Error: No file selected!',

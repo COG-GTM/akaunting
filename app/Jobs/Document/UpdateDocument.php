@@ -80,7 +80,17 @@ class UpdateDocument extends Job implements ShouldUpdate
                 $amount = round((float) $this->request['amount'], $precision);
                 $paid = round((float) $this->model->paid_amount, $precision);
 
-                // At or below what was already paid counts as settled, including an overpayment
+                // Payments can't exceed the total, so neither can an edit push the total below them
+                if ($amount < $paid) {
+                    $type = Str::plural($this->model->type);
+                    $message = trans('messages.error.amount_below_paid', [
+                        'type' => trans_choice("general.$type", 1),
+                        'amount' => money($paid, $currency_code),
+                    ]);
+
+                    throw new \Exception($message);
+                }
+
                 $this->request['status'] = ($amount > $paid) ? 'partial' : 'paid';
             }
 
