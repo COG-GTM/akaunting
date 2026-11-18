@@ -1,0 +1,52 @@
+// Akaunting architecture (master). Render with ./render.sh
+digraph akaunting {
+  graph [rankdir=TB, fontname="DejaVu Sans", fontsize=20, nodesep=0.35, ranksep=0.7, pad=0.3,
+         label="Akaunting on master: one Laravel 10 app, multi-company, extended by modules", labelloc=t];
+  node  [shape=box, style="rounded,filled", fontname="DejaVu Sans", fontsize=16, fillcolor=white, color="#555555"];
+  edge  [fontname="DejaVu Sans", fontsize=13, color="#555555"];
+
+  subgraph cluster_clients {
+    label="Clients"; style="rounded,dashed"; color="#999999";
+    browser   [label="Browser\nBlade + Vue 2 / Element UI\n+ Livewire (public/js bundles)", fillcolor="#e8f0fe"];
+    customer  [label="Customer\nclient portal &\nsigned invoice links", fillcolor="#e8f0fe"];
+    apiclient [label="API client\nBasic auth (Bearer only\nwhen oauth.enabled)", fillcolor="#e8f0fe"];
+    cron      [label="cron → php artisan\nschedule:run", fillcolor="#e8f0fe"];
+  }
+
+  subgraph cluster_app {
+    label="Laravel 10 app (index.php at project root → bootstrap/app.php)"; style="rounded"; color="#333333";
+
+    routes [label="Route groups (app/Providers/Route.php)\ninstall · guest · wizard · admin\nportal · preview · signed · api · common", fillcolor="#fff4e5"];
+    mw     [label="Middleware (app/Http/Kernel.php)\nauth · IdentifyCompany ({company_id})\nLaratrust permission · read.only\nplan.limits · firewall · menu", fillcolor="#fff4e5"];
+    ctrl   [label="Controllers\nSales · Purchases · Banking · Common\nSettings · Portal · Api · Modules · Wizard", fillcolor="#fff4e5"];
+    jobs   [label="Jobs (app/Jobs)\nCreate/Update/Delete per entity\nsync, or queued when configured", fillcolor="#e6f4ea"];
+    events [label="Events → Listeners\n(app/Providers/Event.php)\ndocument history, numbering,\npayments, menus, reports, updates", fillcolor="#e6f4ea"];
+    models [label="Eloquent models (app/Models)\nCompany · Contact · Item · Document\nTransaction · Account · Category · Tax\nscoped by company_id (App\\Scopes\\Company)", fillcolor="#e6f4ea"];
+    views  [label="Views & output\nBlade components · Livewire\nReports · Widgets · DomPDF\nExcel import/export · Notifications", fillcolor="#e6f4ea"];
+    console[label="Artisan commands\ninstall · update · reminder:invoice/bill\nrecurring:check · sample-data:seed", fillcolor="#e6f4ea"];
+    modules[label="Modules (modules/, akaunting/laravel-module)\nOfflinePayments · PaypalStandard (composer)\n+ App Store installs; per-company activation", fillcolor="#f3e8fd"];
+  }
+
+  subgraph cluster_infra {
+    label="Infrastructure"; style="rounded,dashed"; color="#999999";
+    db      [label="Database\nMySQL/MariaDB · PostgreSQL\nSQLite (tests: :memory:)", shape=cylinder, fillcolor="#fce8e6"];
+    storage [label="Storage\nuploads disk · cache · sessions\n(file by default)", shape=cylinder, fillcolor="#fce8e6"];
+    queue   [label="Queue\nsync by default\n(company_id in payload)", fillcolor="#fce8e6"];
+    mail    [label="Mail\nSMTP / Mailgun / Postmark\nSendGrid / log", fillcolor="#fce8e6"];
+    siteapi [label="api.akaunting.com\nApp Store, module downloads,\nupdates, plan limits", fillcolor="#fce8e6"];
+  }
+
+  browser -> routes; customer -> routes; apiclient -> routes; cron -> console;
+  routes -> mw -> ctrl;
+  ctrl -> jobs [label="dispatch"];
+  jobs -> models; jobs -> events [label="fire"];
+  events -> models;
+  ctrl -> views; views -> browser [style=dashed, label="HTML / JSON / PDF"];
+  console -> jobs;
+  models -> db;
+  jobs -> queue; views -> storage; models -> storage [style=dashed, label="media"];
+  events -> mail [label="notifications"];
+  modules -> routes [style=dashed, label="Route::admin/portal/api"];
+  modules -> events [style=dashed, label="listeners"];
+  ctrl -> siteapi [style=dashed, label="Modules / Updates / Plans"];
+}

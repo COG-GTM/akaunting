@@ -14,7 +14,7 @@ Online accounting software designed for small businesses and freelancers. Akaunt
 
 ## Requirements
 
-* PHP 8.1 or higher
+* PHP 8.1 or higher with the extensions listed in `composer.json` (including `bcmath`)
 * Node.js 18 or 20 (the asset pipeline does not build on Node 21+ yet)
 * Database (e.g.: MariaDB, MySQL, PostgreSQL, SQLite)
 * Web Server (eg: Apache, Nginx, IIS)
@@ -22,13 +22,15 @@ Online accounting software designed for small businesses and freelancers. Akaunt
 
 ## Framework
 
-Akaunting uses [Laravel](http://laravel.com), the best existing PHP framework, as the foundation framework and [Module](https://github.com/akaunting/module) package for Apps.
+Akaunting uses [Laravel](http://laravel.com), the best existing PHP framework, as the foundation framework and the [Module](https://github.com/akaunting/laravel-module) package for Apps.
+
+See [docs/architecture.md](docs/architecture.md) for how the code is organised: route groups, multi-company scoping, jobs and events, modules and the asset build, with a diagram.
 
 ## Installation
 
-* Clone the repository: `git clone https://github.com/akaunting/akaunting.git`
-* Install dependencies: `composer install ; npm install ; npm run dev`
-* Install Akaunting:
+* Clone the repository: `git clone https://github.com/COG-GTM/akaunting.git`
+* Install dependencies and build the assets: `composer install ; npm install ; npm run dev` (use `npm run production` for minified assets)
+* Install Akaunting (needs an empty database; `--db-host` defaults to `localhost` and `--db-port` to `3306`):
 
 ```bash
 php artisan install --db-name="akaunting" --db-username="root" --db-password="pass" --admin-email="admin@company.com" --admin-password="123456"
@@ -41,6 +43,27 @@ Akaunting serves itself through the `index.php` in the project root and builds
 its asset URLs accordingly.
 
 > If you prefer, `php artisan serve` also works for a quick local run.
+
+## Project layout
+
+* `app/` - application code: `Http` (controllers, middleware, requests), `Jobs`, `Events` and `Listeners`, `Models`, `Reports`, `Widgets`, `Console`
+* `routes/` - one file per route group (`admin`, `portal`, `api`, `guest`, `wizard`, `signed`, ...)
+* `modules/` - installed apps, e.g. `OfflinePayments` and `PaypalStandard`
+* `resources/` - Blade views, language files and the Vue/Sass sources under `resources/assets`
+* `public/` - compiled assets written by `npm run dev` / `npm run production`
+* `database/` - migrations, seeders and factories
+* `tests/` - PHPUnit `Feature` and `Unit` tests
+
+## Running tests
+
+Tests use the in-memory SQLite settings in `.env.testing` and need the built assets:
+
+```bash
+cp .env.testing .env
+npm install && npm run production
+composer install
+php artisan test --parallel
+```
 
 ## Contributing
 
