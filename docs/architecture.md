@@ -19,7 +19,7 @@ in one database. Optional features ship as modules.
 | Routing | `app/Providers/Route.php`, `routes/*.php` | Maps the route groups below and adds the `Route::admin/portal/preview/signed/api` macros that modules use. |
 | Middleware | `app/Http/Kernel.php`, `app/Http/Middleware` | One middleware group per route group: auth, company identification, Laratrust permissions, read-only mode, plan limits, firewall, menus. |
 | Controllers | `app/Http/Controllers/<Area>` | Thin: validate with a Form Request, dispatch a job, return a view or JSON. API controllers live under `Api/`. |
-| Jobs | `app/Jobs/<Area>` | All writes (`CreateDocument`, `UpdateTransaction`, `CreateCompany`, ...). Run sync, or queued when `QUEUE_CONNECTION` is not `sync`. |
+| Jobs | `app/Jobs/<Area>` | All writes (`CreateDocument`, `UpdateTransaction`, `CreateCompany`, ...), run in the request. Only jobs that implement `ShouldQueue` (exports, zip downloads, `NotifyUser`) go to the queue when `QUEUE_CONNECTION` is not `sync`. |
 | Events and listeners | `app/Events`, `app/Listeners`, `app/Providers/Event.php` | Side effects: document history, next-number counters, payment transactions, notifications, menu building, report filters, version upgrade steps. |
 | Models | `app/Models/{Auth,Banking,Common,Document,Module,Setting}` | Eloquent models; `App\Scopes\Company` adds `company_id = company_id()` to company-owned queries. |
 | Presentation | `resources/views`, `app/View/Components`, `resources/assets/js` | Blade components plus Vue 2 / Element UI page bundles built by Laravel Mix into `public/js` and `public/css`; Livewire for menus and notifications. |

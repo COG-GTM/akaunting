@@ -19,7 +19,7 @@ digraph akaunting {
     routes [label="Route groups (app/Providers/Route.php)\ninstall · guest · wizard · admin\nportal · preview · signed · api · common", fillcolor="#fff4e5"];
     mw     [label="Middleware (app/Http/Kernel.php)\nauth · IdentifyCompany ({company_id})\nLaratrust permission · read.only\nplan.limits · firewall · menu", fillcolor="#fff4e5"];
     ctrl   [label="Controllers\nSales · Purchases · Banking · Common\nSettings · Portal · Api · Modules · Wizard", fillcolor="#fff4e5"];
-    jobs   [label="Jobs (app/Jobs)\nCreate/Update/Delete per entity\nsync, or queued when configured", fillcolor="#e6f4ea"];
+    jobs   [label="Jobs (app/Jobs)\nCreate/Update/Delete per entity, in-request\nShouldQueue jobs (exports, downloads,\nNotifyUser) use the queue", fillcolor="#e6f4ea"];
     events [label="Events → Listeners\n(app/Providers/Event.php)\ndocument history, numbering,\npayments, menus, reports, updates", fillcolor="#e6f4ea"];
     models [label="Eloquent models (app/Models)\nCompany · Contact · Item · Document\nTransaction · Account · Category · Tax\nscoped by company_id (App\\Scopes\\Company)", fillcolor="#e6f4ea"];
     views  [label="Views & output\nBlade components · Livewire\nReports · Widgets · DomPDF\nExcel import/export · Notifications", fillcolor="#e6f4ea"];
