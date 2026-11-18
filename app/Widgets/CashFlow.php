@@ -176,11 +176,7 @@ class CashFlow extends Widget
         foreach ($items as $item) {
             $type = $item->type;
 
-            if ($this->period == 'month') {
-                $i = Date::parse($item->paid_at)->format($date_format);
-            } else {
-                $i = Date::parse($item->paid_at)->quarter;
-            }
+            $i = $this->getPeriodKey($item->paid_at, $date_format, $this->period);
 
             if (!isset($totals[$i])) {
                 continue;

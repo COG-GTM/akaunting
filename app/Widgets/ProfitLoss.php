@@ -174,11 +174,7 @@ class ProfitLoss extends Widget
     public function setTotals(&$totals, $items, $date_field, $date_format): void
     {
         foreach ($items as $item) {
-            if ($this->period == 'month') {
-                $i = Date::parse($item->$date_field)->format($date_format);
-            } else {
-                $i = Date::parse($item->$date_field)->quarter;
-            }
+            $i = $this->getPeriodKey($item->$date_field, $date_format, $this->period);
 
             if (! isset($totals[$i])) {
                 continue;
