@@ -14,7 +14,7 @@ Online accounting software designed for small businesses and freelancers. Akaunt
 
 ## Requirements
 
-* PHP 8.1 or higher with the extensions listed in `composer.json` (including `bcmath`)
+* PHP 8.1, 8.2 or 8.3 with the extensions listed in `composer.json` (including `bcmath`); the locked dev dependencies do not install on PHP 8.4 yet
 * Node.js 18 or 20 (the asset pipeline does not build on Node 21+ yet)
 * Database (e.g.: MariaDB, MySQL, PostgreSQL, SQLite)
 * Web Server (eg: Apache, Nginx, IIS)

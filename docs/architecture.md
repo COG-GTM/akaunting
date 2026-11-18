@@ -8,7 +8,7 @@ What the code on `master` does today. The diagram source is
 
 ## Shape of the system
 
-Akaunting is a single Laravel 10 application (PHP 8.1+). One codebase serves the
+Akaunting is a single Laravel 10 application (PHP 8.1 to 8.3). One codebase serves the
 admin panel, the customer portal, signed public links, the installer and a REST
 API. Every business record belongs to a company, and several companies can live
 in one database. Optional features ship as modules.
