@@ -9,6 +9,7 @@ use App\Traits\Charts;
 use App\Traits\DateTime;
 use App\Utilities\Date;
 use App\Utilities\Reports;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 
 abstract class Widget
@@ -283,6 +284,22 @@ abstract class Widget
         }
 
         return $document->convertToDefault($balance, $document->currency_code, $document->currency_rate);
+    }
+
+    /**
+     * The chart bucket of a date: its month in the given format, or its quarter. Dates cast by the
+     * model are already Carbon instances, and parsing them again runs Date's translated format()
+     * several times per row; months and quarters are plain digits in every locale.
+     */
+    protected function getPeriodKey($date, string $date_format, string $period): string|int
+    {
+        if (! $date instanceof CarbonInterface) {
+            $date = Date::parse($date);
+
+            return ($period == 'month') ? $date->format($date_format) : $date->quarter;
+        }
+
+        return ($period == 'month') ? $date->rawFormat($date_format) : $date->quarter;
     }
 
     /**
