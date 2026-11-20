@@ -52,7 +52,7 @@ its asset URLs accordingly.
 
 > If you prefer, `php artisan serve` also works for a quick local run; it serves the app at http://127.0.0.1:8000.
 
-Sign in with the admin email and password you passed to `php artisan install`. The first sign-in opens the company setup wizard (Company, Currencies, Ready); fill it in or use "Skip this step" to reach the dashboard.
+Sign in with the admin email and password you passed to `php artisan install`. The first sign-in opens the company setup wizard (Company, Currencies, Ready); fill it in or use "Skip this step" on each page. Leaving the wizard opens the Users page; use the sidebar to reach the dashboard.
 
 ## Contributing
 
